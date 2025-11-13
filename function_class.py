@@ -3,21 +3,8 @@ from PyQt6.QtWidgets import QApplication
 from threading import Thread
 from PyQt6 import uic
 
-def nobitex(IRT):
-    r = requests.get(f"https://apiv2.nobitex.ir/v3/orderbook/{IRT}IRT")
-    data = r.json()
-
-    if data["status"] == 'ok' :
-        price = data['lastTradePrice']
-        price = price[:-1]
-        
-    else:
-        price = 404
-
-    return price 
-
 class main_app(QApplication):
-    def __init__(self, argv):
+    def __init__(self, argv:list):
         super().__init__(argv)
 
         def nobitex(IRT):
@@ -59,3 +46,36 @@ class main_app(QApplication):
 
         window.show()
         app.exec()
+class sign_up_in(QApplication):
+    def __init__(self, argv:list):
+        super().__init__(argv)
+        global text
+        text = []
+        self.sign_up = False
+        def sign_in():
+            global text
+            text.append(form.lineEdit.text())
+            text .append(form.lineEdit_2.text())
+            form.lineEdit.setText("")
+            form.lineEdit_2.setText("")
+
+        def sign_up_butten():
+            
+            self.sign_up = True
+            
+            
+            
+        Form, Window = uic.loadUiType("sign up_in.ui")
+        app = QApplication([])
+        window = Window()
+        form = Form()
+        form.setupUi(window)
+        window.setFixedSize(241,205)
+
+        form.pushButton.clicked.connect(sign_in)
+        form.pushButton_2.clicked.connect(sign_up_butten)
+ 
+
+        window.show()
+        app.exec()
+
