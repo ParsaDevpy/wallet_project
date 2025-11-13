@@ -30,7 +30,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;oage 3&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab">
      <property name="styleSheet">
@@ -126,7 +126,7 @@
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #7ec8e3</string>
+       <string notr="true">background-color: #255237</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_1">
@@ -139,7 +139,7 @@
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #00e5ff</string>
+       <string notr="true">background-color: #255237</string>
       </property>
       <property name="text">
        <string>SELL</string>
@@ -155,7 +155,7 @@
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #00e5ff</string>
+       <string notr="true">background-color: #255237</string>
       </property>
       <property name="text">
        <string>BUY</string>
@@ -176,7 +176,7 @@
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #00e5ff</string>
+       <string notr="true">background-color: #255237</string>
       </property>
       <property name="text">
        <string>Deposit</string>
@@ -192,7 +192,7 @@
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #00e5ff</string>
+       <string notr="true">background-color: #255237</string>
       </property>
       <property name="text">
        <string>Withdraw</string>
