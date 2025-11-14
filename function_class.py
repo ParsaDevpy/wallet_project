@@ -2,7 +2,7 @@ import requests
 from PyQt6.QtWidgets import QApplication
 from threading import Thread
 from PyQt6 import uic
-
+import json
 class main_app(QApplication):
     def __init__(self, argv:list):
         super().__init__(argv)
@@ -51,7 +51,6 @@ class sign_up_in(QApplication):
         super().__init__(argv)
         global text
         text = []
-        self.sign_up = False
         def sign_in():
             global text
             text.append(form.lineEdit.text())
@@ -60,11 +59,10 @@ class sign_up_in(QApplication):
             form.lineEdit_2.setText("")
 
         def sign_up_butten():
-            
-            self.sign_up = True
-            
-            
-            
+            d = {"check":"sign_up"}
+            with open("word.json","w") as file:
+                json.dump(d,file)
+            app.exit()    
         Form, Window = uic.loadUiType("sign up_in.ui")
         app = QApplication([])
         window = Window()
