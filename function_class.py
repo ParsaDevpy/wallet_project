@@ -1,48 +1,42 @@
 import requests
-from PyQt6.QtWidgets import QMainWindow,QWidget
+from PyQt6.QtWidgets import QMainWindow
 from threading import Thread
 from PyQt6 import uic
 import json
-class main_app(QWidget):
+class main_app(QMainWindow):
     def __init__(self ):
         super().__init__()
 
-        def nobitex(IRT):
-            r = requests.get(f"https://apiv2.nobitex.ir/v3/orderbook/{IRT}IRT")
-            data = r.json()
+        Form, _ = uic.loadUiType("wallet.ui")
+        self.ui = Form()
+        self.ui.setupUi(self)
+        self.setFixedSize(241,170)
+        price_thread = Thread(target=self.update_price)
+        price_thread.start()
 
-            if data["status"] == 'ok' :
-                price = data['lastTradePrice']
-                price = price[:-1]
-                
-            else:
-                price = 404
+        self.ui.comboBox.addItems(['BTCIRT','ETHIRT','USDTIRT'])
 
-            return price 
+    def nobitex(self,IRT):
+        r = requests.get(f"https://apiv2.nobitex.ir/v3/orderbook/{IRT}IRT")
+        data = r.json()
 
-        def update_price():
-            while True:
-                form.label_4.setText(f'{nobitex("USDT")} تومان')
-                form.label_5.setText(f'{nobitex("ETH")} تومان')
-                form.label_6.setText(f'{nobitex("BTC")} تومان')
-                form.label_4.setText(f'{nobitex("USDT")} تومان')
-                form.label_5.setText(f'{nobitex("ETH")} تومان')
-                form.label_6.setText(f'{nobitex("BTC")} تومان')
+        if data["status"] == 'ok' :
+            price = data['lastTradePrice']
+            price = price[:-1]
+            
+        else:
+            price = 404
 
+        return price 
 
-
-        Form, Window = uic.loadUiType("wallet.ui")
-        window = Window()
-        form = Form()
-        form.setupUi(window)
-        window.setFixedSize(241,170)
-        # price_thread = Thread(target=update_price)
-        # price_thread.start()
-
-        form.comboBox.addItems(['BTCIRT','ETHIRT','USDTIRT'])
-
-
-
+    def update_price(self):
+        while True:
+            self.ui.label_4.setText(f'{self.nobitex("USDT")} تومان')
+            self.ui.label_5.setText(f'{self.nobitex("ETH")} تومان')
+            self.ui.label_6.setText(f'{self.nobitex("BTC")} تومان')
+            self.ui.label_4.setText(f'{self.nobitex("USDT")} تومان')
+            self.ui.label_5.setText(f'{self.nobitex("ETH")} تومان')
+            self.ui.label_6.setText(f'{self.nobitex("BTC")} تومان')
 
 class sign_up_in(QMainWindow):
     def __init__(self):
@@ -67,5 +61,20 @@ class sign_up_in(QMainWindow):
         d = {"check":"sign_up"}
         with open("word.json","w") as file:
             json.dump(d,file)
+class sign_up(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
+        Form, _ = uic.loadUiType("sign up.ui")
+        self.ui = Form()
+        self.ui.setupUi(self)
+        self.setFixedSize(270,240)
 
+class password(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        Form, _ = uic.loadUiType("password.ui")
+        self.ui = Form()
+        self.ui.setupUi(self)
+        self.setFixedSize(270,220)
