@@ -1,7 +1,8 @@
 import requests
 from PyQt6.QtWidgets import QMainWindow
-from threading import Thread
 from PyQt6 import uic
+from PyQt6.QtCore import pyqtSignal
+from threading import Thread
 import json
 class main_app(QMainWindow):
     def __init__(self ):
@@ -38,13 +39,14 @@ class main_app(QMainWindow):
             self.ui.label_5.setText(f'{self.nobitex("ETH")} تومان')
             self.ui.label_6.setText(f'{self.nobitex("BTC")} تومان')
 
-class sign_up_in(QMainWindow):
+class sign_in(QMainWindow):
+    sign_in_signal = pyqtSignal()
     def __init__(self):
         super().__init__()
-
+        
         self.text = []
    
-        Form, _ = uic.loadUiType("sign up_in.ui")
+        Form, _ = uic.loadUiType("sign in.ui")
         self.ui = Form()
         self.ui.setupUi(self)
         self.setFixedSize(241,205)
@@ -52,10 +54,11 @@ class sign_up_in(QMainWindow):
         self.ui.pushButton.clicked.connect(self.sign_in)
         self.ui.pushButton_2.clicked.connect(self.sign_up_butten)
     def sign_in(self):
-        self.text.append(self.ui.lineEdit.text())
-        self.text .append(self.ui.lineEdit_2.text())
-        self.ui.lineEdit.setText("")
-        self.ui.lineEdit_2.setText("")
+        self.sign_in_signal.emit()
+        # self.text.append(self.ui.lineEdit.text())
+        # self.text .append(self.ui.lineEdit_2.text())
+        # self.ui.lineEdit.setText("")
+        # self.ui.lineEdit_2.setText("")
 
     def sign_up_butten(self):
         d = {"check":"sign_up"}
