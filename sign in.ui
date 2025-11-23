@@ -76,7 +76,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_3">
        <property name="styleSheet">
-        <string notr="true">background-color: #255237</string>
+        <string notr="true">color: #fff</string>
        </property>
        <property name="text">
         <string>forgot password!</string>
