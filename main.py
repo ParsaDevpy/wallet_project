@@ -3,8 +3,10 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import pyqtSignal,QTimer
 from function_class import main_app,sign_in,sign_up,password,intruduce
 import json
-from time import sleep
-import asyncio
+from models import Base,database_wallet
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import os
 def sign_in_():
     window2.close()
     window1.show()
@@ -17,8 +19,17 @@ def password_():
 def close():
     window5.close()
     window2.show()
+Engine = create_engine("sqlite:///database_wallet.db", echo=True)
+sessionlocal = sessionmaker(bind=Engine)
+if os.path.isfile("database_wallet.db"):
+    pass
+else:
+    Base.metadata.create_all(Engine)
+
+
 
 app = QApplication([])
+
 
 
 window1 = main_app()

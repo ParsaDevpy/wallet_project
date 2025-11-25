@@ -87,12 +87,12 @@ class intruduce(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.a = 5
         Form, _ = uic.loadUiType("intruduce.ui")
         self.ui = Form()
         self.ui.setupUi(self)
         self.setWindowTitle("WALLET APP")
         self.setFixedSize(270,220)
-
 
         
 
