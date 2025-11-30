@@ -13,32 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>200</y>
-      <width>160</width>
-      <height>80</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout"/>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>158</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>erorr</string>
-    </property>
-   </widget>
-  </widget>
+  <property name="styleSheet">
+   <string notr="true">background-color:#0e0e4e</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>

@@ -37,3 +37,24 @@ def is_valid_email(email_address):
             return False
     else:
         return False
+    
+def send_email_to_manage(massage,title):
+    sender_email = "managewallet8@gmail.com"
+    sender_password = "xkju cxsx apgv nwpp"  
+    subject = title
+    body = massage
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = "gandomymah@gmail.com"
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+        server.quit()
+        return "Your request will be completed within 12/24 hours."  
+    except:
+        return False

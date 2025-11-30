@@ -8,11 +8,14 @@ Base = declarative_base()
 
 class database_wallet(Base):
     __tablename__ = "db wallet"
-
     username = Column(String,primary_key=True)
     email = Column(String)
     password = Column(String)
     fullname = Column(String)
+    IRT = Column(Integer, default=0)
+    USDT = Column(Integer, default=0)
+    BTC = Column(Integer, default=0)
+    ETH = Column(Integer, default=0)
     created_at = Column(DateTime,default= datetime.utcnow)
     last_login = Column(DateTime,default = datetime.utcnow)
 

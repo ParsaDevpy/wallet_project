@@ -1,7 +1,7 @@
 from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import pyqtSignal,QTimer
-from function_class import main_app,sign_in,sign_up,forgot_password,intruduce,error
+from function_class import main_app,sign_in,sign_up,forgot_password,intruduce,error,deposit_withdraw
 import json
 from models import Base,database_wallet
 from sqlalchemy import create_engine
@@ -10,6 +10,8 @@ import os
 def switch_window(win1,win2):
     win1.close()
     win2.show()
+def open_window(win1):
+    win1.show()
 def show_error(title,massage):
     msg = error(title,massage)
 
@@ -28,27 +30,30 @@ app = QApplication([])
 
 window1 = main_app()
 window2 = sign_in()
-window3 = sign_up()
-window4 = forgot_password()
-window5 = intruduce()
+# window3 = sign_up()
+# window4 = forgot_password()
+# window5 = intruduce()
+window6 = deposit_withdraw()
 
 
+# window5.show()
+window2.show()
 
-window5.show()
-
-QTimer.singleShot(1100,lambda: switch_window(window5,window2))
+# QTimer.singleShot(1100,lambda: switch_window(window5,window2))
       
 
-
+window1.connect_error.connect(show_error)
+window1.switch_window.connect(lambda: open_window(window6))
 window2.sign_in_signal.connect(lambda: switch_window(window2,window1))
-window2.sign_up_signal.connect(lambda: switch_window(window2,window3))
-window2.password_signal.connect(lambda: switch_window(window2,window4))
-window3.Email_available.connect(show_error)
-window3.username_available.connect(show_error)
-window3.fill_fields.connect(show_error)
-window3.switch_main.connect(lambda: switch_window(window3,window1))
-
-
+# window2.sign_up_signal.connect(lambda: switch_window(window2,window3))
+# window2.password_signal.connect(lambda: switch_window(window2,window4))
+# window3.Email_available.connect(show_error)
+# window3.username_available.connect(show_error)
+# window3.fill_fields.connect(show_error)
+# window3.switch_main.connect(lambda: switch_window(window3,window2))
+# window4.verifi_error.connect(show_error)
+# window4.email_error.connect(show_error)
+# window4.switch_sign_in.connect(lambda: switch_window(window4,window2))
 
 
 app.exec()
