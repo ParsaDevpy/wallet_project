@@ -1,9 +1,9 @@
 import smtplib
-import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import re
 import dns.resolver
+import random
 def send_verification_code(to_email):
     code = str(random.randint(100000, 999999))
     sender_email = "managewallet8@gmail.com"

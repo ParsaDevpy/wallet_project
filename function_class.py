@@ -1,18 +1,17 @@
-import requests
-from PyQt6.QtWidgets import QMainWindow,QWidget,QMessageBox
+
+from PyQt6.QtWidgets import QMainWindow,QMessageBox
 from PyQt6 import uic
 from PyQt6.QtCore import pyqtSignal,QTimer
+from PyQt6.QtGui import QPixmap
 from threading import Thread
+import requests
 import json
-import asyncio
-from time import sleep
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import pandas as pd
+import plotly.graph_objects as go
 from models import database_wallet as data
 from models import get_db
-import re
 from email_function import is_valid_email,send_verification_code,send_email_to_manage
-import panda as pd
+
 class error(QMainWindow):
     def __init__(self,title,massage):
         super().__init__()
@@ -25,6 +24,9 @@ class error(QMainWindow):
 class main_app(QMainWindow):
     connect_error = pyqtSignal(str,str)
     switch_window = pyqtSignal()
+    BTC_chart = pyqtSignal()
+    ETH_chart = pyqtSignal()
+    USDT_chart = pyqtSignal()
     def __init__(self ):
         super().__init__()
 
@@ -34,15 +36,17 @@ class main_app(QMainWindow):
         self.setWindowTitle("WALLET APP")
         self.setFixedSize(241,220)
         self.ui.pushButton_3.clicked.connect(self.transaction)
-        self.ui.pushButton_3.clicked.connect(self.transaction)
+        self.ui.pushButton_4.clicked.connect(self.transaction)
         self.ui.pushButton.clicked.connect(self.update_balance)
         self.ui.pushButton_2.clicked.connect(self.buy)
         self.ui.pushButton_1.clicked.connect(self.sell)
+        self.ui.pushButton_5.clicked.connect(self.chart)
 
         
         price_thread = Thread(target=self.update_price)
         price_thread.start()
         self.ui.comboBox.addItems(['BTC','ETH','USDT'])
+        self.ui.comboBox_2.addItems(['BTC','ETH','USDT'])
     def nobitex(self,IRT):
         try:
             r = requests.get(f"https://apiv2.nobitex.ir/v3/orderbook/{IRT}IRT")
@@ -71,57 +75,78 @@ class main_app(QMainWindow):
         except:
             self.connect_error.emit("error","error in update price")
     def update_balance(self):
-        db = get_db()
-        with open("user.json","r") as f:
-            balance = json.load(f)
-        result = db.query(data).filter(data.username == balance["user"]).first()
-        self.ui.label_9.setText(f"IRT: {result.IRT}")
-        self.ui.label_10.setText(f"BTC: {result.BTC}")
-        self.ui.label_8.setText(f"ETH: {result.ETH}")
-        self.ui.label_11.setText(f"USDT: {result.USDT}")
+        try:
+            db = get_db()
+            with open("user.json","r") as f:
+                balance = json.load(f)
+            result = db.query(data).filter(data.username == balance["user"]).first()
+            self.ui.label_9.setText(f"IRT: {result.IRT}")
+            self.ui.label_10.setText(f"BTC: {result.BTC}")
+            self.ui.label_8.setText(f"ETH: {result.ETH}")
+            self.ui.label_11.setText(f"USDT: {result.USDT}")
+        except:
+            self.connect_error.emit("database error","try again.")
     def buy(self):
-        db = get_db()
-        with open("user.json","r") as f:
-            balance = json.load(f)
-        result = db.query(data).filter(data.username == balance["user"]).first()
-        amount = float(self.ui.lineEdit.text())
-        Currency = self.ui.comboBox.currentText()
-        price = float(self.nobitex(Currency))
-        main_price = price * amount
-        result_IRT = float(result.IRT)
-        result_Currency = float(getattr(result,Currency))
-        if main_price <= result_IRT:
-            result_IRT -= main_price
-            result_Currency += amount
-            setattr(result,Currency,result_Currency)
-            result.IRT = result_IRT
-            db.commit()
-            self.ui.label_13.setText("succesful!")
-            self.update_balance()
-        else:
-            self.connect_error.emit("error","you don't have enough money!!")
+        try:
+            db = get_db()
+            with open("user.json","r") as f:
+                balance = json.load(f)
+            result = db.query(data).filter(data.username == balance["user"]).first()
+            amount = float(self.ui.lineEdit.text())
+            Currency = self.ui.comboBox.currentText()
+            price = float(self.nobitex(Currency))
+            main_price = price * amount
+            result_IRT = float(result.IRT)
+            result_Currency = float(getattr(result,Currency))
+            if main_price <= result_IRT:
+                result_IRT -= main_price
+                result_Currency += amount
+                setattr(result,Currency,result_Currency)
+                result.IRT = result_IRT
+                db.commit()
+                self.ui.label_13.setText("succesful!")
+                self.update_balance()
+            else:
+                self.connect_error.emit("error","you don't have enough money!!")
+        except:
+            self.connect_error.emit("database error","try again.")
     def sell(self):
-        db = get_db()
-        with open("user.json","r") as f:
-            balance = json.load(f)
-        result = db.query(data).filter(data.username == balance["user"]).first()
-        amount = float(self.ui.lineEdit.text())
-        Currency = self.ui.comboBox.currentText()
-        price = float(self.nobitex(Currency))
-        main_price = price * amount
-        result_IRT = float(result.IRT)
-        result_Currency = float(getattr(result,Currency))
-        if amount <= result_Currency:
-            result_IRT += main_price
-            result_Currency -= amount
-            setattr(result,Currency,result_Currency)
-            result.IRT = result_IRT
-            db.commit()
-            self.ui.label_13.setText("succesful!")
-            self.update_balance()
-        else:
-            self.connect_error.emit("error","you don't have enough money!!")
+        try:
+            db = get_db()
+            with open("user.json","r") as f:
+                balance = json.load(f)
+            result = db.query(data).filter(data.username == balance["user"]).first()
+            amount = float(self.ui.lineEdit.text())
+            Currency = self.ui.comboBox.currentText()
+            price = float(self.nobitex(Currency))
+            main_price = price * amount
+            result_IRT = float(result.IRT)
+            result_Currency = float(getattr(result,Currency))
+            if amount <= result_Currency:
+                result_IRT += main_price
+                result_Currency -= amount
+                setattr(result,Currency,result_Currency)
+                result.IRT = result_IRT
+                db.commit()
+                self.ui.label_13.setText("succesful!")
+                self.update_balance()
+            else:
+                self.connect_error.emit("error","you don't have enough money!!")
+        except:
+            self.connect_error.emit("database error","try again.")
+    def chart(self):
+        try:
 
+            Currency_chart = self.ui.comboBox_2.currentText()
+            match Currency_chart:
+                case "USDT":
+                    self.USDT_chart.emit()
+                case "BTC":
+                    self.BTC_chart.emit()
+                case "ETH":
+                    self.ETH_chart.emit()
+        except:
+            self.connect_error.emit("database error","try again.")
     def transaction(self):
         self.switch_window.emit()
 
@@ -138,56 +163,117 @@ class deposit_withdraw(QMainWindow):
         self.ui.pushButton.clicked.connect(self.withdraw)
         self.ui.pushButton_2.clicked.connect(self.deposite)
     def withdraw(self):
-        db = get_db()
-        email = self.ui.lineEdit_4.text()
-        username = self.ui.lineEdit_3.text()
-        Amount = self.ui.lineEdit_2.text()
-        card_number = self.ui.lineEdit.text()
-        check_email = db.query(data).filter(data.email == email).first()
-        if email and username and Amount and card_number and check_email:
-            if check_email.username == username:
-                if int(Amount) <= check_email.balance:
-                    result = send_email_to_manage(f"کاربر به ایمیل و نام کاربری {email},{username} درخواست برداشت {Amount} تومان به شماره ی {card_number} را دارد.","درخواست برداشت")
+        try:
+
+            db = get_db()
+            email = self.ui.lineEdit_4.text()
+            username = self.ui.lineEdit_3.text()
+            Amount = self.ui.lineEdit_2.text()
+            card_number = self.ui.lineEdit.text()
+            check_email = db.query(data).filter(data.email == email).first()
+            if email and username and Amount and card_number and check_email:
+                if check_email.username == username:
+                    if int(Amount) <= check_email.balance:
+                        result = send_email_to_manage(f"کاربر به ایمیل و نام کاربری {email},{username} درخواست برداشت {Amount} تومان به شماره ی {card_number} را دارد.","درخواست برداشت")
+                        if result:
+                            self.ui.label_8.setText(result)
+                        else:
+                            self.fill_fields.emit("connection error","Please try again.")
+                    else:
+                        self.balane_error.emit("balance error","The requested amount is less than your balance.")
+                else:
+                    self.fill_fields.emit("error","Please fill in all the fields correct.")
+            else:
+                self.fill_fields.emit("error","Please fill in all the fields correct.")
+        except:
+            self.fill_fields.emit("connection error","Please try again.")
+    def deposite(self):
+        try:
+            db = get_db()
+            email = self.ui.lineEdit_5.text()
+            username = self.ui.lineEdit_6.text()
+            massage = self.ui.textEdit.toPlainText()
+            check_email = db.query(data).filter(data.email == email).first()
+            if email and username and massage and check_email:
+                if check_email.username == username:
+                    result = send_email_to_manage(f"کاربر به ایمیل و نام کاربری {email},{username} درخواست واریزی دارد رسید واریزی: {massage}","درخواست واریز")
                     if result:
-                        self.ui.label_8.setText(result)
+                        self.ui.label_9.setText(result)
                     else:
                         self.fill_fields.emit("connection error","Please try again.")
                 else:
-                    self.balane_error.emit("balance error","The requested amount is less than your balance.")
+                    self.fill_fields.emit("error","Please fill in all the fields correct.")
             else:
                 self.fill_fields.emit("error","Please fill in all the fields correct.")
-        else:
-            self.fill_fields.emit("error","Please fill in all the fields correct.")
-    def deposite(self):
-        db = get_db()
-        email = self.ui.lineEdit_5.text()
-        username = self.ui.lineEdit_6.text()
-        massage = self.ui.textEdit.toPlainText()
-        check_email = db.query(data).filter(data.email == email).first()
-        if email and username and massage and check_email:
-            if check_email.username == username:
-                result = send_email_to_manage(f"کاربر به ایمیل و نام کاربری {email},{username} درخواست واریزی دارد رسید واریزی: {massage}","درخواست واریز")
-                if result:
-                    self.ui.label_9.setText(result)
-                else:
-                    self.fill_fields.emit("connection error","Please try again.")
-            else:
-                self.fill_fields.emit("error","Please fill in all the fields correct.")
-        else:
-            self.fill_fields.emit("error","Please fill in all the fields correct.")
-        
+        except:
+            self.fill_fields.emit("connection error","Please try again.")
 class chart(QMainWindow):
-    def __init__(self):
+    connection_Error = pyqtSignal(str,str)
+    def __init__(self,coin):
         super().__init__()
-    def get_price(self,coin_id,vs_currency="usd",days = 5):
-        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
-        params = {"vs_currency": vs_currency, "days": days}
-        response = requests.get(url,params)
-        data = response.json()
-        price = data["prices"]
-        df = pd.Dataframe(price,columns=["Timestamp", "Price"])
-        df[data] = pd.to_datetime(df["Timestamp"], unit="ms")
+        Form, _ = uic.loadUiType("chart.ui")
+        self.ui = Form()
+        self.ui.setupUi(self)
+        self.setWindowTitle("WALLET APP")
+        self.setFixedSize(621,462)
+        self.coin = coin
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_chart)
+        self.timer.start(30000)
+        try:
+            self.update_chart()
+        except:
+            self.connection_Error.emit("connection error","Please try again.")
+    def get_price(self):
+        try:
+            url = f"https://api.coingecko.com/api/v3/coins/{self.coin}/market_chart"
+            params = {"vs_currency": "usd", "days": 15}
+            response = requests.get(url,params)
+            data = response.json()
+            price = data["prices"]
+            df = pd.DataFrame(price,columns=["Timestamp", "Price"])
+            df["Data"] = pd.to_datetime(df["Timestamp"], unit="ms")
+        except:
+            self.connection_Error.emit("connection error","Please try again.")
 
+        return df
+    
+    def simulate_candeles(self,df):
+        try:
+            candele = []
+            for i in range(0,len(df),5):
+                chuck = df.iloc[i:i+5]
+                if len(chuck) == 0:
+                    continue
+                o = chuck["Price"].iloc[0]
+                c = chuck["Price"].iloc[-1]
+                h = chuck["Price"].max()
+                l = chuck["Price"].min()
+                t = chuck["Data"].iloc[0]
+                candele.append([t,o,c,h,l])
+                df_candele = pd.DataFrame(candele,columns=["Date","Open","High","Low","Close"])
+        except:
+            self.connection_Error.emit("connection error","Please try again.")
+        return df_candele
+    def creat_candele(self,df):
+        try:
+            fig = go.Figure(data=[go.Candlestick(
+                x=df["Date"],
+                open=df["Open"],
+                high=df["High"],
+                low=df["Low"],
+                close=df["Close"]
+            )])
+            fig.write_image("chart.png")
+        except:
+            self.connection_Error.emit("connection error","Please try again.")
+    def update_chart(self):
+        df_price = self.get_price()
+        df_candele = self.simulate_candeles(df_price)
+        self.creat_candele(df_candele)
+        pixmap = QPixmap("chart.png")
+        self.ui.label.setPixmap(pixmap)
+        
 
 class sign_in(QMainWindow):
     sign_in_signal = pyqtSignal()

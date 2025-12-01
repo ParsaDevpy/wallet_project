@@ -30,7 +30,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;oage 3&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <property name="styleSheet">
@@ -330,19 +330,6 @@
        <string notr="true">background-color: #255237</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="comboBox_3">
-      <property name="geometry">
-       <rect>
-        <x>128</x>
-        <y>30</y>
-        <width>81</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: #255237</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButton_5">
       <property name="geometry">
        <rect>
@@ -357,22 +344,6 @@
       </property>
       <property name="text">
        <string>confirm</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_14">
-      <property name="geometry">
-       <rect>
-        <x>126</x>
-        <y>10</y>
-        <width>71</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#fff</string>
-      </property>
-      <property name="text">
-       <string>timeframe:</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_15">
