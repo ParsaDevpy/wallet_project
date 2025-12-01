@@ -5,11 +5,19 @@ from sqlalchemy.orm import sessionmaker
 from function_class import main_app,sign_in,sign_up,forgot_password,intruduce,error,deposit_withdraw,chart
 from models import Base
 import os
+charts = {}
 def switch_window(win1,win2):
     win1.close()
     win2.show()
 def open_window(win1):
     win1.show()
+def open_chart(Currency):
+    global charts
+    if Currency not in charts:
+        charts[Currency] = chart(Currency)
+    charts[Currency].show()
+    charts[Currency].raise_()
+
 def show_error(title,massage):
     msg = error(title,massage)
 
@@ -32,9 +40,9 @@ window3 = sign_up()
 window4 = forgot_password()
 window5 = intruduce()
 window6 = deposit_withdraw()
-chart_BTC = chart("bitcoin")
-chart_ETH = chart("ethereum")
-chart_USDT = chart("tether")
+# chart_BTC = chart("bitcoin")
+# chart_ETH = chart("ethereum")
+# chart_USDT = chart("tether")
 
 
 
@@ -43,9 +51,9 @@ window5.show()
 
 QTimer.singleShot(1100,lambda: switch_window(window5,window2))
       
-window1.ETH_chart.connect(lambda: open_window(chart_ETH))
-window1.BTC_chart.connect(lambda: open_window(chart_BTC))
-window1.USDT_chart.connect(lambda: open_window(chart_USDT))
+window1.ETH_chart.connect(lambda: open_chart("ethereum"))
+window1.BTC_chart.connect(lambda: open_chart("bitcoin"))
+window1.USDT_chart.connect(lambda: open_chart("tether"))
 window1.connect_error.connect(show_error)
 window1.switch_window.connect(lambda: open_window(window6))
 window2.sign_in_signal.connect(lambda: switch_window(window2,window1))
